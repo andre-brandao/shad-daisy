@@ -1,4 +1,4 @@
-# SHADCN + Daisy UI
+# SHADCN + Daisy UI + Sveltekit
 
 ## This is a demo project on integrating shadcn with daisy ui
 
