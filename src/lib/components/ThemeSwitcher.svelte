@@ -1,13 +1,12 @@
 <script>
 	import { themes, changeTheme } from './themes';
 
-	import {Palette} from 'lucide-svelte'
-	
+	import { Palette } from 'lucide-svelte';
 </script>
 
-<div class="dropdown  dropdown-bottom">
+<div class="dropdown dropdown-bottom">
 	<div title="Themes" role="button" tabindex="0" class="btn">
-	<Palette/>
+		<Palette /> Theme 
 	</div>
 
 	<!-- Themes -->
