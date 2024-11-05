@@ -1,79 +1,109 @@
 <script lang="ts">
-	import { getLocalTimeZone, today } from '@internationalized/date';
-	import { RangeCalendar } from '$lib/components/ui/range-calendar/index.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
-	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
+	// import PlusCircled from 'svelte-radix/PlusCircled.svelte';
+	import { AlbumArtwork, Menu, PodcastEmptyPlaceholder, Sidebar } from './(components)/index.js';
+	import { playlists } from './(data)/playlists.js';
+	import { listenNowAlbums, madeForYouAlbums } from './(data)/albums.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import ThemeSwitcher from '@/components/ThemeSwitcher.svelte';
-
-	import * as Popover from '$lib/components/ui/popover/index.js';
-
-	const start = today(getLocalTimeZone());
-	const end = start.add({ days: 7 });
-
-	let value = $state({
-		start,
-		end
-	});
 </script>
 
-<ThemeSwitcher />
+<div class="md:hidden">
+	<enhanced:img src="$lib/img/examples/music-light.png" alt="Music" class="block dark:hidden"
+	></enhanced:img>
+	<enhanced:img src="$lib/img/examples/music-dark.png" alt="Music" class="hidden dark:block"
+	></enhanced:img>
+</div>
+<div class="hidden md:block">
+	<Menu />
+	<div class="border-t">
+		<div class="bg-background">
+			<div class="grid lg:grid-cols-5">
+				<Sidebar {playlists} class="hidden lg:block" />
+				<div class="col-span-3 lg:col-span-4 lg:border-l">
+					<div class="h-full px-4 py-6 lg:px-8">
+						<Tabs.Root value="music" class="h-full space-y-6">
+							<div class="space-between flex items-center">
+								<Tabs.List>
+									<Tabs.Trigger value="music" class="relative">Music</Tabs.Trigger>
+									<Tabs.Trigger value="podcasts">Podcasts</Tabs.Trigger>
+									<Tabs.Trigger value="live" disabled>Live</Tabs.Trigger>
 
-
-<RangeCalendar bind:value class="rounded-md border" />
-
-<Dialog.Root>
-	<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>Edit Profile</Dialog.Trigger>
-	<Dialog.Content class="sm:max-w-[425px]">
-		<Dialog.Header>
-			<Dialog.Title>Edit profile</Dialog.Title>
-			<Dialog.Description>
-				Make changes to your profile here. Click save when you're done.
-			</Dialog.Description>
-		</Dialog.Header>
-		<div class="grid gap-4 py-4">
-			<div class="grid grid-cols-4 items-center gap-4">
-				<Label for="name" class="text-right">Name</Label>
-				<Input id="name" value="Pedro Duarte" class="col-span-3" />
-			</div>
-			<div class="grid grid-cols-4 items-center gap-4">
-				<Label for="username" class="text-right">Username</Label>
-				<Input id="username" value="@peduarte" class="col-span-3" />
+								</Tabs.List>
+								<div class="ml-auto mr-4">
+									<Button>
+										<!-- <PlusCircled class="mr-2 size-4" /> -->
+										Add music
+									</Button>
+								</div>
+							</div>
+							<Tabs.Content value="music" class="border-none p-0 outline-none">
+								<div class="flex items-center justify-between">
+									<div class="space-y-1">
+										<h2 class="text-2xl font-semibold tracking-tight">Listen Now</h2>
+										<p class="text-sm text-muted-foreground">Top picks for you. Updated daily.</p>
+									</div>
+								</div>
+								<Separator class="my-4" />
+								<div class="relative">
+									<ScrollArea orientation="both">
+										<div class="flex space-x-4 pb-4">
+											{#each listenNowAlbums as album}
+												<AlbumArtwork
+													{album}
+													class="w-[250px]"
+													aspectRatio="portrait"
+													width={250}
+													height={330}
+												/>
+											{/each}
+										</div>
+									</ScrollArea>
+								</div>
+								<div class="mt-6 space-y-1">
+									<h2 class="text-2xl font-semibold tracking-tight">Made for You</h2>
+									<p class="text-sm text-muted-foreground">
+										Your personal playlists. Updated daily.
+									</p>
+								</div>
+								<Separator class="my-4" />
+								<div class="relative">
+									<ScrollArea orientation="both">
+										<div class="flex space-x-4 pb-4">
+											{#each madeForYouAlbums as album}
+												<AlbumArtwork
+													{album}
+													class="w-[150px]"
+													aspectRatio="square"
+													width={150}
+													height={150}
+												/>
+											{/each}
+										</div>
+									</ScrollArea>
+								</div>
+							</Tabs.Content>
+							<Tabs.Content
+								value="podcasts"
+								class="h-full flex-col border-none p-0 data-[state=active]:flex"
+							>
+								<div class="flex items-center justify-between">
+									<div class="space-y-1">
+										<h2 class="text-2xl font-semibold tracking-tight">New Episodes</h2>
+										<p class="text-sm text-muted-foreground">
+											Your favorite podcasts. Updated daily.
+										</p>
+									</div>
+								</div>
+								<Separator class="my-4" />
+								<PodcastEmptyPlaceholder />
+							</Tabs.Content>
+						</Tabs.Root>
+					</div>
+				</div>
 			</div>
 		</div>
-		<Dialog.Footer>
-			<Button type="submit">Save changes</Button>
-		</Dialog.Footer>
-	</Dialog.Content>
-</Dialog.Root>
-
-<Popover.Root>
-	<Popover.Trigger class={buttonVariants({ variant: 'outline' })}>Open</Popover.Trigger>
-	<Popover.Content class="w-80">
-		<div class="grid gap-4">
-			<div class="space-y-2">
-				<h4 class="font-medium leading-none">Dimensions</h4>
-				<p class="text-sm text-muted-foreground">Set the dimensions for the layer.</p>
-			</div>
-			<div class="grid gap-2">
-				<div class="grid grid-cols-3 items-center gap-4">
-					<Label for="width">Width</Label>
-					<Input id="width" value="100%" class="col-span-2 h-8" />
-				</div>
-				<div class="grid grid-cols-3 items-center gap-4">
-					<Label for="maxWidth">Max. width</Label>
-					<Input id="maxWidth" value="300px" class="col-span-2 h-8" />
-				</div>
-				<div class="grid grid-cols-3 items-center gap-4">
-					<Label for="height">Height</Label>
-					<Input id="height" value="25px" class="col-span-2 h-8" />
-				</div>
-				<div class="grid grid-cols-3 items-center gap-4">
-					<Label for="maxHeight">Max. height</Label>
-					<Input id="maxHeight" value="none" class="col-span-2 h-8" />
-				</div>
-			</div>
-		</div>
-	</Popover.Content>
-</Popover.Root>
+	</div>
+</div>
